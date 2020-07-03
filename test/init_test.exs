@@ -1,6 +1,4 @@
-Code.require_file("test/mix_test_helper.exs")
-
-defmodule InitTest do
+defmodule Distillery.Test.InitTest do
   use ExUnit.Case
 
   import MixTestHelper
@@ -9,11 +7,23 @@ defmodule InitTest do
   @init_test_rel_path Path.join([__DIR__, "fixtures", "init_test_app", "rel"])
   @init_test_rel_config_path Path.join([__DIR__, "fixtures", "init_test_app", "rel", "config.exs"])
 
-  @init_test_invalid_config_template_path Path.join([__DIR__, "fixtures", "init_test_app", "init_test_config.eex"])
+  @init_test_invalid_config_template_path Path.join([
+                                            __DIR__,
+                                            "fixtures",
+                                            "init_test_app",
+                                            "init_test_config.eex"
+                                          ])
+  
+  setup_all do
+    old_dir = File.cwd!()
+    File.cd!(@init_test_app_path)
+    {:ok, _} = mix("deps.get")
+    File.cd!(old_dir)
+  end
 
   describe "release.init" do
     test "creates an example rel/config.exs" do
-      old_dir = File.cwd!
+      old_dir = File.cwd!()
       File.cd!(@init_test_app_path)
       {:ok, _} = File.rm_rf(@init_test_rel_path)
       refute File.exists?(@init_test_rel_path)
@@ -30,7 +40,7 @@ defmodule InitTest do
     end
 
     test "creates rel/config.exs from a custom template" do
-      old_dir = File.cwd!
+      old_dir = File.cwd!()
       File.cd!(@init_test_app_path)
       {:ok, _} = File.rm_rf(@init_test_rel_path)
       refute File.exists?(@init_test_rel_path)
